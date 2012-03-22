@@ -73,24 +73,21 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
 	abstract JPanel getControls();
 	
 	final protected ToolPanel parent;
+	
+	protected DragMode mode; 
+
 	public Tool(ToolPanel parent) {
+	    mode = DragMode.ROTATE_VIEW;
 		this.parent = parent;
 	}
 
 	protected Point startPoint = null;
 	protected int button = 0;
+	
 
 	public void mouseDragged(MouseEvent e) {
 		if (startPoint == null) return;
 		Point p = e.getPoint();
-		DragMode mode = DragMode.ROTATE_VIEW; 
-		if (Base.isMacOS()) {
-			if (button == MouseEvent.BUTTON1 && !e.isShiftDown()) { mode = DragMode.ROTATE_VIEW; }
-			else if (button == MouseEvent.BUTTON1 && e.isShiftDown()) { mode = DragMode.ROTATE_VIEW; }
-		} else {
-			if (button == MouseEvent.BUTTON1) { mode = DragMode.ROTATE_VIEW; }
-			else if (button == MouseEvent.BUTTON3) { mode = DragMode.ROTATE_VIEW; }
-		}
 		double xd = (double)(p.x - startPoint.x);
 		double yd = (double)(p.y - startPoint.y);
 		switch (mode) {
@@ -108,6 +105,17 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
 	public void mouseMoved(MouseEvent e) {
 	}
 	public void mouseClicked(MouseEvent e) {
+	
+		button = e.getButton();
+		
+		if (button == MouseEvent.BUTTON1) { 
+			if (mode == DragMode.ROTATE_VIEW) {
+				mode = DragMode.TRANSLATE_VIEW; 
+			} else {
+				mode = DragMode.ROTATE_VIEW; 
+			}
+		}
+		
 	}
 	public void mouseEntered(MouseEvent e) {
 	}
